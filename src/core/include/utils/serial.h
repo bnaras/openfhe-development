@@ -44,22 +44,25 @@
 #endif
 #define CEREAL_RAPIDJSON_HAS_CXX11_NOEXCEPT 0
 
-// In order to correctly identify GCC and clang we must either:
-// 1. use "#if defined(__GNUC__) && !defined(__clang__)" (preferred option)
-// 2. or check the condition "#if defined __clang__" first
-// The reason is: clang always defines __GNUC__ and __GNUC_MINOR__ and __GNUC_PATCHLEVEL__ according to the version of gcc that it claims full compatibility with.
-#if defined(__GNUC__) && !defined(__clang__)
-    #if __GNUC__ >= 8
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wclass-memaccess"
-        #if __GNUC__ >= 13
-            #pragma GCC diagnostic ignored "-Wdangling-reference"
-        #endif
-    #endif
-#elif defined __clang__
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wunused-private-field"
-    #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+// Silence a few warnings in the cereal headers included below. Structured
+// so R's static pragma scanner (tools::.check_package_code_pragmas) sees
+// each pragma directly under #ifdef __clang__ / #ifdef __GNUC__ — the only
+// form the scanner recognises as portable. Clang predefines __GNUC__, so
+// the clang arm is checked first to avoid double-applying GCC pragmas.
+#ifdef __clang__
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wunused-private-field"
+#  pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#else
+#  ifdef __GNUC__
+#    if __GNUC__ >= 8
+#      pragma GCC diagnostic push
+#      pragma GCC diagnostic ignored "-Wclass-memaccess"
+#      if __GNUC__ >= 13
+#        pragma GCC diagnostic ignored "-Wdangling-reference"
+#      endif
+#    endif
+#  endif
 #endif
 
 #include "cereal/archives/portable_binary.hpp"
@@ -71,12 +74,14 @@
 #include "cereal/types/string.hpp"
 #include "cereal/types/vector.hpp"
 
-#if defined(__GNUC__) && !defined(__clang__)
-    #if __GNUC__ >= 8
-        #pragma GCC diagnostic pop
-    #endif
-#elif defined __clang__
-    #pragma clang diagnostic pop
+#ifdef __clang__
+#  pragma clang diagnostic pop
+#else
+#  ifdef __GNUC__
+#    if __GNUC__ >= 8
+#      pragma GCC diagnostic pop
+#    endif
+#  endif
 #endif
 
 #include "utils/sertype.h"
