@@ -36,6 +36,7 @@
  */
 
 #include "config_core.h"
+#include "utils/openfhe_log.h"
 #ifdef WITH_BE4
 
     #include "math/math-hal.h"
@@ -1010,18 +1011,18 @@ template class bigintdyn::ubint<expdtype>;
 
 template <typename limb_t>
 void ubint<limb_t>::PrintIntegerConstants() {
-    std::cout << "sizeof UINT8_C  " << sizeof(UINT8_C(1)) << std::endl;
-    std::cout << "sizeof UINT16_C " << sizeof(UINT16_C(1)) << std::endl;
-    std::cout << "sizeof UINT32_C " << sizeof(UINT32_C(1)) << std::endl;
-    std::cout << "sizeof UINT64_C " << sizeof(UINT64_C(1)) << std::endl;
-    std::cout << "sizeof uint8_t  " << sizeof(uint8_t) << std::endl;
-    std::cout << "sizeof uint16_t " << sizeof(uint16_t) << std::endl;
-    std::cout << "sizeof uint32_t " << sizeof(uint32_t) << std::endl;
-    std::cout << "sizeof uint64_t " << sizeof(uint64_t) << std::endl;
+    OPENFHE_LOG_OUT << "sizeof UINT8_C  " << sizeof(UINT8_C(1)) << std::endl;
+    OPENFHE_LOG_OUT << "sizeof UINT16_C " << sizeof(UINT16_C(1)) << std::endl;
+    OPENFHE_LOG_OUT << "sizeof UINT32_C " << sizeof(UINT32_C(1)) << std::endl;
+    OPENFHE_LOG_OUT << "sizeof UINT64_C " << sizeof(UINT64_C(1)) << std::endl;
+    OPENFHE_LOG_OUT << "sizeof uint8_t  " << sizeof(uint8_t) << std::endl;
+    OPENFHE_LOG_OUT << "sizeof uint16_t " << sizeof(uint16_t) << std::endl;
+    OPENFHE_LOG_OUT << "sizeof uint32_t " << sizeof(uint32_t) << std::endl;
+    OPENFHE_LOG_OUT << "sizeof uint64_t " << sizeof(uint64_t) << std::endl;
     #if defined(HAVE_INT128)
-    // std::cout << "sizeof UINT128_C "<< sizeof (UINT128_C(1)) << std::endl;
+    // OPENFHE_LOG_OUT << "sizeof UINT128_C "<< sizeof (UINT128_C(1)) << std::endl;
     // dbc commented out  unsupported on some machines
-    std::cout << "sizeof uint128_t " << sizeof(uint128_t) << std::endl;
+    OPENFHE_LOG_OUT << "sizeof uint128_t " << sizeof(uint128_t) << std::endl;
     #endif
 }
 
