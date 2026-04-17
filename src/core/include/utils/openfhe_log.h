@@ -46,11 +46,27 @@ class ROStream {
         if (!s.empty()) flush_fn("%s", s.c_str());
     }
 
-    // Forward everything (values AND std::endl / std::flush manipulators)
-    // into the underlying std::ostringstream.
+    // Forward plain values into the underlying std::ostringstream.
     template <typename T>
     ROStream& operator<<(T&& x) {
         buf << std::forward<T>(x);
+        return *this;
+    }
+
+    // Explicit overloads for ostream manipulators (std::endl, std::flush,
+    // std::hex, std::dec, etc.). Without these, template deduction on
+    // `operator<<(T&& x)` fails because these manipulators are overloaded
+    // function templates and the compiler can't pick an instantiation.
+    ROStream& operator<<(std::ostream& (*manip)(std::ostream&)) {
+        buf << manip;
+        return *this;
+    }
+    ROStream& operator<<(std::ios& (*manip)(std::ios&)) {
+        buf << manip;
+        return *this;
+    }
+    ROStream& operator<<(std::ios_base& (*manip)(std::ios_base&)) {
+        buf << manip;
         return *this;
     }
 };
