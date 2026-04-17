@@ -159,8 +159,14 @@ if("${isSystemDir}" STREQUAL "-1")
 endif("${isSystemDir}" STREQUAL "-1")
 
 # Compiler flags
-set(C_COMPILE_FLAGS "-Wall -Werror -DOPENFHE_VERSION=${OPENFHE_VERSION}")
-set(CXX_COMPILE_FLAGS "-Wall -Werror -DOPENFHE_VERSION=${OPENFHE_VERSION}")
+# The r_pkg branch intentionally drops -Werror from the upstream
+# defaults: when OpenFHE is embedded in the openfhe R package, R's
+# Makeconf supplies -pedantic (seen on Linux R 4.5 and rtools45)
+# which upstream -Werror promotes to errors inside cereal's __int128
+# typedefs and other benign header patterns. -Werror is upstream's CI
+# discipline; -Wall alone is sufficient for the embedded build.
+set(C_COMPILE_FLAGS "-Wall -DOPENFHE_VERSION=${OPENFHE_VERSION}")
+set(CXX_COMPILE_FLAGS "-Wall -DOPENFHE_VERSION=${OPENFHE_VERSION}")
 if(WITH_NATIVEOPT)
     string(APPEND C_COMPILE_FLAGS " -march=native")
     string(APPEND CXX_COMPILE_FLAGS " -march=native")

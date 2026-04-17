@@ -1,27 +1,38 @@
-# Set the default behavior, in case people don't have core.autocrlf set.
-* text=auto
+# r_pkg branch: force LF on all text files regardless of platform.
+# When OpenFHE is embedded in the openfhe R package as a git submodule,
+# R CMD check on Windows flags any CRLF line endings in C/C++ headers
+# (NOTE, Writing R Extensions §1.1.3.1 step 16) and may flag CMake-
+# generated Makefiles (WARNING). The upstream default `* text=auto`
+# converts to native-CRLF on Windows runners, which is what tripped CI.
+# Forcing `eol=lf` side-steps the runner's core.autocrlf setting.
+* text=auto eol=lf
 
-# Explicitly declare text files you want to always be normalized and converted
-# to native line endings on checkout.
-*.c text
-*.cc text
-*.cpp text
-*.h text
-*.y text
-*.l text
-*.java text
-*.mac text
-*.txt text
-*.sh text
-*.py text
-Makefile* text
+# Explicit per-format pins covering everything R CMD check scans.
+*.c         text eol=lf
+*.cc        text eol=lf
+*.cpp       text eol=lf
+*.cxx       text eol=lf
+*.h         text eol=lf
+*.hh        text eol=lf
+*.hpp       text eol=lf
+*.in        text eol=lf
+*.y         text eol=lf
+*.l         text eol=lf
+*.java      text eol=lf
+*.mac       text eol=lf
+*.txt       text eol=lf
+*.sh        text eol=lf
+*.py        text eol=lf
+CMakeLists.txt text eol=lf
+*.cmake     text eol=lf
+Makefile*   text eol=lf
 
-# Declare files that will always have CRLF line endings on checkout.
-*.sln text eol=crlf
+# Windows-only files that legitimately want CRLF.
+*.sln       text eol=crlf
 
-# Denote all files that are truly binary and should not be modified.
-*.png binary
-*.jpg binary
-*.xlsx binary
-*.lz binary
-*.gz binary
+# Binaries.
+*.png       binary
+*.jpg       binary
+*.xlsx      binary
+*.lz        binary
+*.gz        binary
