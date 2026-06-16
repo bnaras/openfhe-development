@@ -108,10 +108,22 @@ public:
 #endif
     }
 
-    // @Brief returns min of int n and machineThreads
+    // @Brief returns min of int n, machineThreads, and the live OpenMP
+    // thread limit. R_PKG PATCH: the upstream version clamps only by
+    // machineThreads, a value latched once from omp_get_max_threads() at
+    // static-init (library load) and never refreshed. Because every hot
+    // region emits num_threads(GetThreadLimit(...)) -- a clause that
+    // overrides the runtime ICV -- a post-load omp_set_num_threads() has no
+    // effect, so the library cannot be capped in-process (it grabs every
+    // core, tripping CRAN's two-core policy). Additionally clamping by the
+    // live omp_get_max_threads() makes omp_set_num_threads(n) authoritative
+    // again on every platform. See notes/discoveries and the maintenance
+    // playbook: re-apply on each OpenFHE bump.
     int GetThreadLimit(int n) const {
 #ifdef PARALLEL
-        return n > machineThreads ? machineThreads : n;
+        int lim  = n > machineThreads ? machineThreads : n;
+        int live = omp_get_max_threads();
+        return lim > live ? live : lim;
 #else
         return 1;
 #endif
