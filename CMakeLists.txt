@@ -623,8 +623,13 @@ include(ExternalProject)
 set(THIRDPARTYDIR ${CMAKE_CURRENT_SOURCE_DIR}/third-party)
 include_directories(${THIRDPARTYDIR}/include)
 
-include_directories(${THIRDPARTYDIR}/cereal/include)
-install(DIRECTORY ${THIRDPARTYDIR}/cereal/include/ DESTINATION include/openfhe)
+# R_PKG PATCH: cereal vendored at the source-tree top level (cereal/),
+# not third-party/, so the shipped CRAN tarball path stays <=100 bytes
+# (the longer `openfhe.R/` package prefix otherwise tips the deepest
+# cereal header over the limit). Re-apply on each OpenFHE bump.
+set(CEREALDIR ${CMAKE_CURRENT_SOURCE_DIR}/cereal)
+include_directories(${CEREALDIR}/include)
+install(DIRECTORY ${CEREALDIR}/include/ DESTINATION include/openfhe)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/third-party/google-test/googletest)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/third-party/google-test/googletest/include)

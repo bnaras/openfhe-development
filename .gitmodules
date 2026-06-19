@@ -8,6 +8,6 @@
 	path = third-party/gperftools
 	url = https://github.com/gperftools/gperftools.git
 [submodule "third-party/cereal"]
-	path = third-party/cereal
+	path = cereal
 	url = https://github.com/bnaras/cereal.git
 	branch = r_pkg
